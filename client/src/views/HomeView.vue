@@ -1,7 +1,9 @@
 <template>
 	<div class="h-screen relative">
-		<GeoErrorModal/>
+		<GeoErrorModal @closeGeoError="closeGeolocationError" v-if="geoError" :geoErrorMEssage="geoErrorMessage"/>
 		<div id="map" class="h-full z-[1]"></div>
+
+    <MapFeatures :coords="coords" :fetchCoordinates="fetchCoordinates"/>
 	</div>
 </template>
 
@@ -9,10 +11,11 @@
 import leaflet from 'leaflet';
 import { onMounted, ref } from "vue";
 import GeoErrorModal from '@/components/GeoErrorModal.vue';
+import MapFeatures from '@/components/MapFeatures.vue';
 
 export default {
 	name: 'HomeView',
-	components: { GeoErrorModal },
+	components: { GeoErrorModal, MapFeatures },
 	setup() {
 		let map;
 		onMounted(() => {
@@ -49,8 +52,8 @@ export default {
 			fetchCoordinates.value = null;
 
 			const setSessionCoordinates = {
-					lat: position.coords.latitude,
-					lng: position.coords.longitude
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
 			}
 
 			sessionStorage.setItem('coords', JSON.stringify(setSessionCoordinates));
@@ -81,7 +84,7 @@ export default {
 			geoErrorMessage.value = null;
 		};
 
-		return { coords, geoMarker, closeGeolocationError }
+		return { coords, geoMarker, closeGeolocationError, geoError, geoErrorMessage, fetchCoordinates }
 	}
 };
 </script>
